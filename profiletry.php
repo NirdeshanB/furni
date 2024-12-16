@@ -41,9 +41,9 @@ if (isset($_SESSION['username'])) {
     <link rel="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" />
     <title>Furni</title>
     <style>
-    .profilep img {
-        height: 300px;
-    }
+        .profilep img {
+            height: 300px;
+        }
     </style>
 </head>
 
@@ -73,22 +73,16 @@ if (isset($_SESSION['username'])) {
                 <div class="col-md-6 mb-5 mb-md-0">
                     <h2 class="h3 mb-3 text-black">Billing Details</h2>
                     <div class="p-3 p-lg-5 border bg-white">
-                        <form method="POST" enctype="multipart/form-data" action="profile.php" class="form">
+                        <form method="POST" enctype="multipart/form-data" action="profiletry.php" class="form">
                             <div class="form-group">
                                 <label for="c_country" class="text-black">Country <span
                                         class="text-danger">*</span></label>
                                 <select name="c_country" class="form-control" required>
-                                    <option value="1" selected>Nepal</option>
-                                    <option value="2">Korea</option>
-                                    <option value="3">China</option>
-                                    <option value="4">Indonesia</option>
-                                    <option value="5">Ghana</option>
-                                    <option value="6">Albania</option>
-                                    <option value="7">Bahrain</option>
-                                    <option value="8">India</option>
-                                    <option value="9">Dominican Republic</option>
-                                    <option value="10">Bangladesh</option>
-                                    <option value="11">Pakistan</option>
+                                    <option value="Nepal" selected>Nepal</option>
+                                    <option value="India">India</option>
+                                    <option value="China">China</option>
+                                    <option value="USA">USA</option>
+                                    <option value="UK">UK</option>
                                 </select>
                             </div>
                             <div class="form-group row">
@@ -139,6 +133,10 @@ if (isset($_SESSION['username'])) {
                                         required />
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <button type="submit" name="submit" class="btn btn-black btn-lg py-3 btn-block">Update
+                                    profile</button>
+                            </div>
                     </div>
                 </div>
 
@@ -152,15 +150,6 @@ if (isset($_SESSION['username'])) {
                                     <img src="<?= $userDetails['Profile_picture'] ?>"
                                         class="img-fluid product-thumbnail" />
                                 </div>
-                                <div>
-                                    <h2>Change Profile Picture</h2>
-                                    <input type="file" name="profile_picture" id="profile" />
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <button type="submit" name="submit" class="btn btn-black btn-lg py-3 btn-block">Update
-                                    profile</button>
                             </div>
                         </div>
                     </div>
@@ -177,103 +166,62 @@ if (isset($_SESSION['username'])) {
     <script src="https://kit.fontawesome.com/cc6ca513a2.js" crossorigin="anonymous"></script>
     <script src="js/tiny-slider.js"></script>
     <script src="js/custom.js"></script>
-    <script>
-    // Clear form fields after submission
-    document.querySelector("form").onsubmit = function() {
-        this.reset(); // Reset all fields in the form
-        // Delay for form processing (if needed)
-    };
-    </script>
 </body>
 
 </html>
 <?php
 if (isset($_POST['submit'])) {
-    $fname = $_POST['c_fname'];
+    $country = $_POST['c_country'];
+    $fullname = $_POST['c_fname'];
     $address = $_POST['c_address'];
     $city = $_POST['c_city'];
     $postal = $_POST['c_postal_zip'];
     $email = $_POST['c_email_address'];
     $phone = $_POST['c_phone'];
-    $profilePicture = $_FILES["profile_picture"]["name"];
+    $username = $_SESSION['username'];
 
-    if (empty($fname) || empty($email) || empty($phone) || empty($address) || empty($postal) || empty($city)) {
-        echo '<script>alert("Please fill in all required fields.");</script>';
-    } else {
-        // Validate email format
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo '<script>alert("Invalid email format.");</script>';
-        } else {
-            // Handle profile picture upload
-            $targetDir = addslashes("furni-1.0.0\\Users\\");
-            $imageFileType = strtolower(pathinfo($profilePicture, PATHINFO_EXTENSION));
-            $newFileName = $username . "." . $imageFileType; // Rename file to username.extension
-            $targetFile = $targetDir . $newFileName;
-            $uploadOk = 1;
+    // Debugging: Verify session and input data
+    echo "Session Username: $username";
+    echo "New Data: $country, $fullname, $address, $city, $postal, $email, $phone";
 
-            // Check if a new file is uploaded
-            if (!empty($_FILES["profile_picture"]["tmp_name"])) {
-                // Check file size
-                if ($_FILES["profile_picture"]["size"] > 5000000) { // 5 MB
-                    echo '<script>alert("Sorry, your file is too large.");</script>';
-                    $uploadOk = 0;
-                }
+    // Check if the user exists
+    $checkQuery = "SELECT * FROM user WHERE Username = ?";
+    $stmtCheck = $conn->prepare($checkQuery);
+    $stmtCheck->bind_param("s", $username);
+    $stmtCheck->execute();
+    $checkResult = $stmtCheck->get_result();
 
-                // Allow certain file formats
-                if (!in_array($imageFileType, ['jpg', 'png', 'jpeg'])) {
-                    echo '<script>alert("Sorry, only JPG, PNG & JPEG files are allowed.");</script>';
-                    $uploadOk = 0;
-                }
-
-                // // Check if the current file is different
-                // if ($targetFile !== $userDetails['Profile_picture']) {
-                //     if (file_exists($targetFile)) {
-                //         unlink($targetFile); // Delete the old file only if it's not the same
-                //     }
-                // }
-
-                // Check if $uploadOk is set to 0 by errors
-                if ($uploadOk == 1) {
-                    if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
-                        $imagePath = $targetFile; // Use the new file path for the database
-                    } else {
-                        echo '<script>alert("Sorry, there was an error uploading your file.");</script>';
-                        $imagePath = $userDetails['Profile_picture']; // Fallback to old profile picture
-                    }
-                } else {
-                    $imagePath = $userDetails['Profile_picture']; // Fallback to old profile picture
-                }
-            } else {
-                $imagePath = $userDetails['Profile_picture']; // No new file uploaded
-            }
-
-            // Debugging: Output variables
-            echo "Prepared statement inputs:<br>";
-            echo "Full Name: $fname<br>";
-            echo "Address: $address<br>";
-            echo "City: $city<br>";
-            echo "Postal: $postal<br>";
-            echo "Email: $email<br>";
-            echo "Phone: $phone<br>";
-            echo "Profile Picture Path: $imagePath<br>";
-
-            // Prepare and execute the SQL statement
-            $stmt = $conn->prepare("UPDATE user SET Full_Name = ?, Address = ?, City = ?, Postal_code = ?, Email = ?, Phone_number = ?, Profile_picture = ? WHERE Username = ?");
-            $stmt->bind_param('ssssssss', $fname, $address, $city, $postal, $email, $phone, $imagePath, $username);
-            if ($stmt->execute()) {
-                // Confirm rows affected
-                if ($stmt->affected_rows > 0) {
-                    echo '<script>alert("Data Modified successfully."); window.location.href = "profile.php";</script>';
-                } else {
-                    echo '<script>alert("No changes were made to your profile.");</script>';
-                }
-            } else {
-                echo '<script>alert("Database Error: ' . $stmt->error . '");</script>';
-            }
-
-            $stmt->close();
-        }
+    if ($checkResult->num_rows == 0) {
+        echo '<script>alert("No matching user found.");</script>';
+        exit;
     }
-}
 
-$conn->close();
+    $existingData = $checkResult->fetch_assoc();
+
+    // Check for data changes
+    if (
+        trim(strtolower($existingData['Country'])) === trim(strtolower($country)) &&
+        trim($existingData['Full_Name']) === trim($fullname) &&
+        trim($existingData['Address']) === trim($address) &&
+        trim($existingData['City']) === trim($city) &&
+        trim($existingData['Postal_code']) === trim($postal) &&
+        trim($existingData['Email']) === trim($email) &&
+        trim($existingData['Phone_number']) === trim($phone)
+    ) {
+        echo '<script>alert("No changes detected. Update skipped."); window.location.href = "profiletry.php";</script>';
+        exit;
+    }
+
+
+    // Update user details
+    $query = "UPDATE user SET Country = ?, Full_Name = ?, Address = ?, City = ?, Postal_code = ?, Email = ?, Phone_number = ? WHERE Username = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ssssssss", $country, $fullname, $address, $city, $postal, $email, $phone, $username);
+
+    if ($stmt->execute() && $stmt->affected_rows > 0) {
+        echo '<script>alert("Data Modified successfully."); window.location.href = "profiletry.php";</script>';
+    } else {
+        echo '<script>alert("No changes detected or an error occurred.");</script>';
+    }
+    $stmt->close();
+}

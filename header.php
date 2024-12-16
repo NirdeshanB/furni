@@ -84,29 +84,29 @@ $_SESSION['userInfo'] = $userInfo;
                     </li>
                     <li class="nav-item dropdown">
                         <?php if (isset($_SESSION['username'])) { ?>
-                        <?php foreach ($_SESSION['adminInfo'] as $info): ?>
-                        <!-- Dropdown for logged-in users -->
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="<?php echo $info['profile_picture']; ?>" class="rounded-circle me-2" width="40"
-                                height="40" alt="Profile" />
-                            <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                            <?php endforeach; ?>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
-                        </ul>
+                            <?php foreach ($_SESSION['userInfo'] as $info): ?>
+                                <!-- Dropdown for logged-in users -->
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="<?php echo $info['profile_picture']; ?>" class="rounded-circle me-2" width="40"
+                                        height="40" alt="Profile" />
+                                    <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
+                                <?php endforeach; ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                            </ul>
                         <?php } else { ?>
-                        <!-- Dropdown for users not logged in -->
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="images/user.svg" alt="User Icon" class="img-fluid me-2" width="20" />
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="login.php">Login</a></li>
-                            <li><a class="dropdown-item" href="register.php">Register</a></li>
-                        </ul>
+                            <!-- Dropdown for users not logged in -->
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="images/user.svg" alt="User Icon" class="img-fluid me-2" width="20" />
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="login.php">Login</a></li>
+                                <li><a class="dropdown-item" href="register.php">Register</a></li>
+                            </ul>
                         <?php } ?>
                     </li>
 
