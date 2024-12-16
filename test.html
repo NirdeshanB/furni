@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JSON to HTML Example</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css"
+    />
+  </head>
+
+  <body>
+    <div id="dataDisplay">
+      <!-- JSON data will be displayed here -->
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $.ajax({
+          url: "items.json",
+          method: "GET",
+          dataType: "json",
+          success: function (data) {
+            const dataDisplay = $("#dataDisplay");
+
+            data.forEach(function (item) {
+              console.log(item.name); // Print each name to the console
+
+              // Create HTML elements for each item
+              const imageElement = $("<img>")
+                .attr("src", item.image)
+                .attr("style", "width: 500px;height:500px")
+                .attr("alt", item.name);
+              const nameElement = $("<p>").text("Name: " + item.name);
+              const categoryElement = $("<p>").text(
+                "Description: " + item.category
+              );
+              const priceElement = $("<p>").text("Price: " + item.price);
+
+              // Append the elements to the "dataDisplay" div
+              dataDisplay.append(
+                imageElement,
+                nameElement,
+                categoryElement,
+                priceElement
+              );
+            });
+
+            // Append the elements to the "dataDisplay" div
+            dataDisplay.append(
+              imageElement,
+              nameElement,
+              categoryElement,
+              priceElement
+            );
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.error("Error fetching JSON data:", textStatus, errorThrown);
+            console.log(jqXHR);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>

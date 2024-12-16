@@ -1,0 +1,219 @@
+[
+  {
+    "id": "ch1",
+    "category": "chair",
+    "image": "images/chair-1.jpg",
+    "name": "chair-1",
+    "price": 1000
+  },
+  {
+    "id": "ch2",
+    "category": "chair",
+    "image": "images/chair-2.jpg",
+    "name": "chair-2",
+    "price": 1500
+  },
+  {
+    "id": "ch3",
+    "category": "chair",
+    "image": "images/chair-3.png",
+    "name": "chair-3",
+    "price": 2000
+  },
+  {
+    "id": "ch4",
+    "category": "chair",
+    "image": "images/chair-4.png",
+    "name": "chair-4",
+    "price": 2500
+  },
+  {
+    "id": "ch5",
+    "category": "chair",
+    "image": "images/chair-5.png",
+    "name": "chair-5",
+    "price": 3000
+  },
+  {
+    "id": "ch6",
+    "category": "chair",
+    "image": "images/chair-6.jpg",
+    "name": "chair-6",
+    "price": 3500
+  },
+  {
+    "id": "ch7",
+    "category": "chair",
+    "image": "images/chair-7.png",
+    "name": "chair-7",
+    "price": 4000
+  },
+  {
+    "id": "ch8",
+    "category": "chair",
+    "image": "images/chair-8.png",
+    "name": "chair-8",
+    "price": 4500
+  },
+  {
+    "id": "ch9",
+    "category": "chair",
+    "image": "images/chair-9.png",
+    "name": "chair-9",
+    "price": 5000
+  },
+  {
+    "id": "ch10",
+    "category": "chair",
+    "image": "images/chair-10.png",
+    "name": "chair-10",
+    "price": 5500
+  },
+  {
+    "id": "ch11",
+    "category": "chair",
+    "image": "images/chair-11.jpg",
+    "name": "chair-11",
+    "price": 6000
+  },
+  {
+    "id": "ch12",
+    "category": "chair",
+    "image": "images/chair-12.jpg",
+    "name": "chair-12",
+    "price": 6500
+  },
+  {
+    "id": "ch13",
+    "category": "chair",
+    "image": "images/chair-13.jpg",
+    "name": "chair-13",
+    "price": 7000
+  },
+  {
+    "id": "ch14",
+    "category": "chair",
+    "image": "images/chair-14.jpg",
+    "name": "chair-14",
+    "price": 7500
+  },
+  {
+    "id": "ch15",
+    "category": "chair",
+    "image": "images/chair-15.jpg",
+    "name": "chair-15",
+    "price": 8000
+  },
+  {
+    "id": "tb1",
+    "category": "table",
+    "image": "images/table-1.jpg",
+    "name": "table-1",
+    "price": 1000
+  },
+  {
+    "id": "tb2",
+    "category": "table",
+    "image": "images/table-2.jpg",
+    "name": "table-2",
+    "price": 1500
+  },
+  {
+    "id": "tb3",
+    "category": "table",
+    "image": "images/table-3.jpg",
+    "name": "table-3",
+    "price": 1500
+  },
+  {
+    "id": "tb4",
+    "category": "table",
+    "image": "images/table-4.jpg",
+    "name": "table-4",
+    "price": 2000
+  },
+  {
+    "id": "tb5",
+    "category": "table",
+    "image": "images/table-5.jpg",
+    "name": "table-5",
+    "price": 2500
+  },
+  {
+    "id": "tb6",
+    "category": "table",
+    "image": "images/table-6.jpg",
+    "name": "table-6",
+    "price": 3000
+  },
+  {
+    "id": "tb7",
+    "category": "table",
+    "image": "images/table-7.jpg",
+    "name": "table-7",
+    "price": 3500
+  },
+  {
+    "id": "tb8",
+    "category": "table",
+    "image": "images/table-8.jpg",
+    "name": "table-8",
+    "price": 4000
+  },
+  {
+    "id": "tb9",
+    "category": "table",
+    "image": "images/table-9.jpg",
+    "name": "table-9",
+    "price": 4500
+  },
+  {
+    "id": "tb9",
+    "category": "table",
+    "image": "images/table-9.jpg",
+    "name": "table-9",
+    "price": 4500
+  },
+  {
+    "id": "tb10",
+    "category": "table",
+    "image": "images/table-10.jpg",
+    "name": "table-10",
+    "price": 5000
+  },
+  {
+    "id": "tb11",
+    "category": "table",
+    "image": "images/table-11.jpg",
+    "name": "table-11",
+    "price": 5500
+  },
+  {
+    "id": "tb12",
+    "category": "table",
+    "image": "images/table-12.jpg",
+    "name": "table-12",
+    "price": 6000
+  },
+  {
+    "id": "tb13",
+    "category": "table",
+    "image": "images/table-13.jpg",
+    "name": "table-13",
+    "price": 6500
+  },
+  {
+    "id": "tb14",
+    "category": "table",
+    "image": "images/table-14.jpg",
+    "name": "table-14",
+    "price": 7000
+  },
+  {
+    "id": "tb15",
+    "category": "table",
+    "image": "images/table-15.jpg",
+    "name": "table-15",
+    "price": 7500
+  }
+]

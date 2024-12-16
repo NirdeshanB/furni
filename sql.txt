@@ -1,0 +1,18 @@
+table
+Insert into product values(NULL, 'table-1','1000','furni-1.0.0\images\table-1.jpg','tb1');
+Insert into product values(NULL, 'table-2','1000','furni-1.0.0\images\table-2.jpg','tb2');
+Insert into product values(NULL, 'table-3','1000','furni-1.0.0\images\table-3.jpg','tb3');
+Insert into product values(NULL, 'table-4','1000','furni-1.0.0\images\table-4.jpg','tb4');
+Insert into product values(NULL, 'table-5','1000','furni-1.0.0\images\table-5.jpg','tb5');
+Insert into product values(NULL, 'table-6','1000','furni-1.0.0\images\table-6.jpg','tb6');
+Insert into product values(NULL, 'table-7','1000','furni-1.0.0\images\table-7.jpg','tb7');
+Insert into product values(NULL, 'table-8','1000','furni-1.0.0\images\table-8.jpg','tb8');
+Insert into product values(NULL, 'table-9','1000','furni-1.0.0\images\table-9.jpg','tb9');
+Insert into product values(NULL, 'table-10','1000','furni-1.0.0\images\table-10.jpeg','tb10');
+Insert into product values(NULL, 'table-11','1000','furni-1.0.0\images\table-11.jpg','tb11');
+Insert into product values(NULL, 'table-12','1000','furni-1.0.0\images\table-12.jpg','tb12');
+Insert into product values(NULL, 'table-13','1000','furni-1.0.0\images\table-13.jpg','tb13');
+Insert into product values(NULL, 'table-14','1000','furni-1.0.0\images\table-14.jpg','tb14');
+Insert into product values(NULL, 'table-15','1000','furni-1.0.0\images\table-15.jpg','tb15');
+
+chair
