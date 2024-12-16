@@ -10,27 +10,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require 'config.php'; // Include your database connection
 
-
-// Ensure session variables are set only if they exist
-$userInfo = [];
-if ($stmt = $conn->prepare("SELECT User_id, Full_name, Profile_picture FROM user WHERE Username = ?")) {
-    $stmt->bind_param("s", $_SESSION['username']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    while ($row = $result->fetch_assoc()) {
-        $userInfo[] = [
-            'id' => $row['User_id'],
-            'fullname' => $row['Full_name'],
-            'profile_picture' => $row['Profile_picture'],
-        ];
-    }
-
-    $stmt->close();
-}
-
-// Store the admin info in session
-$_SESSION['userInfo'] = $userInfo;
 ?>
 
 
@@ -84,14 +63,12 @@ $_SESSION['userInfo'] = $userInfo;
                     </li>
                     <li class="nav-item dropdown">
                         <?php if (isset($_SESSION['username'])) { ?>
-                            <?php foreach ($_SESSION['userInfo'] as $info): ?>
-                                <!-- Dropdown for logged-in users -->
-                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="<?php echo $info['profile_picture']; ?>" class="rounded-circle me-2" width="40"
-                                        height="40" alt="Profile" />
-                                    <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                                <?php endforeach; ?>
+                            <!-- Dropdown for logged-in users -->
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="<?php echo $_SESSION['profile_picture']; ?>" class="rounded-circle me-2"
+                                    width="40" height="40" alt="Profile" />
+                                <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="profile.php">Profile</a></li>

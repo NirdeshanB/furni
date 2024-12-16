@@ -38,18 +38,19 @@ foreach ($cart_items as $item) {
 <html lang="en">
 
 <head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
     <!-- (Omitted head content for brevity, same as before) -->
     <style>
-    .paymentmethods img {
-        height: 50px;
-        margin: 10px;
-    }
+        .paymentmethods img {
+            height: 50px;
+            margin: 10px;
+        }
     </style>
 </head>
 
 <body>
     <!-- Start Header/Navigation -->
-    <?php include 'headertry.php'; ?>
+    <?php include 'header.php'; ?>
     <!-- End Header/Navigation -->
 
     <!-- Start Hero Section -->
@@ -154,11 +155,11 @@ foreach ($cart_items as $item) {
                                         </thead>
                                         <tbody>
                                             <?php foreach ($_SESSION['cartItems'] as $item): ?>
-                                            <tr>
-                                                <td><?= $item['product_name'] ?></td>
-                                                <td><?= $item['quantity'] ?></td>
-                                                <td> Rs. <?= number_format($item['item_total'], 2) ?>/-</td>
-                                            </tr>
+                                                <tr>
+                                                    <td><?= $item['product_name'] ?></td>
+                                                    <td><?= $item['quantity'] ?></td>
+                                                    <td> Rs. <?= number_format($item['item_total'], 2) ?>/-</td>
+                                                </tr>
                                             <?php endforeach; ?>
                                             <tr>
                                                 <td colspan='2' align="center"><b>Discount Amount</b></td>
@@ -179,38 +180,41 @@ foreach ($cart_items as $item) {
 
                                 <div class="border p-3 mb-5">
                                     <h3>Payment Methods</h3>
-                                    <div class="py-2 paymentmethods">
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="paymentMethods"
-                                                id="inlineRadio1" value="paypal">
-                                            <label class="form-check-label" for="inlineRadio1"><img
-                                                    src="images/paypal.png" /></label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="paymentMethods"
-                                                id="inlineRadio2" value="stripe">
-                                            <label class="form-check-label" for="inlineRadio2"><img
-                                                    src="images/stripe.png" /></label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="paymentMethods"
-                                                id="inlineRadio4" value="khalti">
-                                            <label class="form-check-label" for="inlineRadio4"><img
-                                                    src="images/khalti.png" /></label>
-                                        </div>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="paymentMethods"
-                                                id="inlineRadio3" value="esewa">
-                                            <label class="form-check-label" for="inlineRadio3"><img
-                                                    src="images/cash.png" /></label>
+                                    <form action="checkouttry.php" method="POST">
+                                        <div class="py-2 paymentmethods">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="paymentMethods"
+                                                    id="inlineRadio1" value="paypal">
+                                                <label class="form-check-label" for="inlineRadio1"><img
+                                                        src="images/paypal.png" /></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="paymentMethods"
+                                                    id="inlineRadio2" value="stripe">
+                                                <label class="form-check-label" for="inlineRadio2"><img
+                                                        src="images/stripe.png" /></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="paymentMethods"
+                                                    id="inlineRadio4" value="khalti">
+                                                <label class="form-check-label" for="inlineRadio4"><img
+                                                        src="images/khalti.png" /></label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="paymentMethods"
+                                                    id="inlineRadio3" value="cash">
+                                                <label class="form-check-label" for="inlineRadio3"><img
+                                                        src="images/cash.png" /></label>
+                                            </div>
+
                                         </div>
 
-                                    </div>
-
-                                    <div class="form-group">
-                                        <button class="btn btn-black btn-lg py-3 btn-block" id="placeOrderButton">Place
-                                            Order</button>
-                                    </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-black btn-lg py-3 btn-block" id="placeOrderButton"
+                                                name="placeorder">Place
+                                                Order</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -225,46 +229,52 @@ foreach ($cart_items as $item) {
     <?php include 'footer.php'; ?>
     <!-- End Footer Section -->
     <script src="https://kit.fontawesome.com/cc6ca513a2.js" crossorigin="anonymous"></script>
+    <script src="js/jquery-3.6.0.min.js"></script>
     <script src="js/tiny-slider.js"></script>
-    <script src="js/custom.js"></script>
+    <script src="js/aos.js"></script>
     <script>
-    //disable the place order button if all required fields are not filled
-    document.getElementById("placeOrderButton").addEventListener("click", function() {
-        var selectedPaymentMethod = document.querySelector('input[name="paymentMethods"]:checked').value;
+        //disable the place order button if all required fields are not filled
+        document.getElementById("placeOrderButton").addEventListener("click", function () {
+            var selectedPaymentMethod = document.querySelector('input[name="paymentMethods"]:checked').value;
 
-        // Form validation
-        var formFields = document.querySelectorAll(".form-control[required]");
-        var isFormFilled = true;
+            // Form validation
+            var formFields = document.querySelectorAll(".form-control[required]");
+            var isFormFilled = true;
 
-        for (var i = 0; i < formFields.length; i++) {
-            if (formFields[i].value === "") {
-                isFormFilled = false;
-                break; // Stop the loop if a field is empty
+            for (var i = 0; i < formFields.length; i++) {
+                if (formFields[i].value === "") {
+                    isFormFilled = false;
+                    break; // Stop the loop if a field is empty
+                }
             }
-        }
-        if (isFormFilled) {
-            // Payment method selection logic (unchanged)
-            switch (selectedPaymentMethod) {
-                case "paypal":
-                    window.location.href = "https://www.paypal.com";
-                    break;
-                case "stripe":
-                    window.location = "out.php";
-                    break;
-                case "esewa":
-                    window.location.href = "https://esewa.com";
-                    break;
-                case "khalti":
-                    window.location.href = "https://khalti.com";
-                    break;
-                default:
-                    alert("Please select a payment method.");
+            if (isFormFilled) {
+                // Payment method selection logic (unchanged)
+                switch (selectedPaymentMethod) {
+                    case "paypal":
+                        window.location.href = "https://www.paypal.com";
+                        break;
+                    case "stripe":
+                        window.location = "stripe.php";
+                        break;
+                    case "cash":
+                        window.location.href = "thankyou.php";
+                        break;
+                    case "khalti":
+                        window.location.href = "khalti.php";
+                        break;
+                    default:
+                        alert("Please select a payment method.");
+                }
+            } else {
+                alert("Please fill out all required fields before placing your order.");
             }
-        } else {
-            alert("Please fill out all required fields before placing your order.");
-        }
-    });
+        });
     </script>
 </body>
 
 </html>
+<?php
+if (isset($_POST['placeorder'])) {
+    $_SESSION['paymentMethod'] = $_POST['paymentMethods'];
+    exit;
+}

@@ -51,10 +51,10 @@ foreach ($cart_items as $item) {
     <link rel="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" />
     <title>Furni</title>
     <style>
-    .paymentmethods img {
-        height: 50px;
-        margin: 10px;
-    }
+        .paymentmethods img {
+            height: 50px;
+            margin: 10px;
+        }
     </style>
 </head>
 
@@ -165,11 +165,11 @@ foreach ($cart_items as $item) {
                                         </thead>
                                         <tbody>
                                             <?php foreach ($_SESSION['cartItems'] as $item): ?>
-                                            <tr>
-                                                <td><?= $item['product_name'] ?></td>
-                                                <td><?= $item['quantity'] ?></td>
-                                                <td> Rs. <?= number_format($item['item_total'], 2) ?>/-</td>
-                                            </tr>
+                                                <tr>
+                                                    <td><?= $item['product_name'] ?></td>
+                                                    <td><?= $item['quantity'] ?></td>
+                                                    <td> Rs. <?= number_format($item['item_total'], 2) ?>/-</td>
+                                                </tr>
                                             <?php endforeach; ?>
                                             <tr>
                                                 <td colspan='2' align="center"><b>Discount Amount</b></td>
@@ -191,24 +191,24 @@ foreach ($cart_items as $item) {
                                 <div class="border p-3 mb-5">
                                     <h3>Payment Methods</h3>
                                     <div class="py-2 paymentmethods">
-                                        <div class="form-check form-check-inline">
+                                        <!-- <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio1" value="paypal">
                                             <label class="form-check-label" for="inlineRadio1"><img
                                                     src="images/paypal.png" /></label>
-                                        </div>
+                                        </div> -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio2" value="stripe">
                                             <label class="form-check-label" for="inlineRadio2"><img
                                                     src="images/stripe.png" /></label>
                                         </div>
-                                        <div class="form-check form-check-inline">
+                                        <!-- <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio4" value="khalti">
                                             <label class="form-check-label" for="inlineRadio4"><img
                                                     src="images/khalti.png" /></label>
-                                        </div>
+                                        </div> -->
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio3" value="cash">
@@ -239,42 +239,42 @@ foreach ($cart_items as $item) {
     <script src="js/tiny-slider.js"></script>
     <script src="js/custom.js"></script>
     <script>
-    //disable the place order button if all required fields are not filled
-    document.getElementById("placeOrderButton").addEventListener("click", function() {
-        var selectedPaymentMethod = document.querySelector('input[name="paymentMethods"]:checked').value;
+        //disable the place order button if all required fields are not filled
+        document.getElementById("placeOrderButton").addEventListener("click", function () {
+            var selectedPaymentMethod = document.querySelector('input[name="paymentMethods"]:checked').value;
 
-        // Form validation
-        var formFields = document.querySelectorAll(".form-control[required]");
-        var isFormFilled = true;
+            // Form validation
+            var formFields = document.querySelectorAll(".form-control[required]");
+            var isFormFilled = true;
 
-        for (var i = 0; i < formFields.length; i++) {
-            if (formFields[i].value === "") {
-                isFormFilled = false;
-                break; // Stop the loop if a field is empty
+            for (var i = 0; i < formFields.length; i++) {
+                if (formFields[i].value === "") {
+                    isFormFilled = false;
+                    break; // Stop the loop if a field is empty
+                }
             }
-        }
-        if (isFormFilled) {
-            // Payment method selection logic (unchanged)
-            switch (selectedPaymentMethod) {
-                case "paypal":
-                    window.location.href = "https://www.paypal.com";
-                    break;
-                case "stripe":
-                    window.location = "stripe.php";
-                    break;
-                case "cash":
-                    window.location.href = "thankyou.php";
-                    break;
-                case "khalti":
-                    window.location.href = "khalti.php";
-                    break;
-                default:
-                    alert("Please select a payment method.");
+            if (isFormFilled) {
+                // Payment method selection logic (unchanged)
+                switch (selectedPaymentMethod) {
+                    // case "paypal":
+                    //     window.location.href = "https://www.paypal.com";
+                    //     break;
+                    case "stripe":
+                        window.location = "stripe.php";
+                        break;
+                    case "cash":
+                        window.location.href = "thankyou.php";
+                        break;
+                    // case "khalti":
+                    //     window.location.href = "khalti.php";
+                    //     break;
+                    default:
+                        alert("Please select a payment method.");
+                }
+            } else {
+                alert("Please fill out all required fields before placing your order.");
             }
-        } else {
-            alert("Please fill out all required fields before placing your order.");
-        }
-    });
+        });
     </script>
 </body>
 

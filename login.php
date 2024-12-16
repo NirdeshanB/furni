@@ -86,6 +86,7 @@ if (isset($_POST['submit'])) {
                 // Set session variables
                 $_SESSION['user_id'] = $row['User_id'];
                 $_SESSION['username'] = $row['Username'];
+                $_SESSION['fullname'] = $row['Full_Name'];
                 $_SESSION['profile_picture'] = $row['Profile_picture'];
 
                 // Redirect to index

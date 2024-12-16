@@ -176,9 +176,8 @@ if (isset($_POST['submit'])) {
                     $imagePath = $targetDir . $newFileName;
 
                     // Save data to database
-                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash password
                     $sql = "INSERT INTO user (Full_name, Email, Username, Password, Phone_number, Date_of_birth, Gender, Address, Country, City, Region, Postal_code, Profile_picture) VALUES 
-                        ('$fullname', '$email', '$username', '$hashedPassword', '$pnumber', '$dob', '$gender', '$address', '$country', '$city', '$region', '$postalCode', '$imagePath')";
+                        ('$fullname', '$email', '$username', '$password', '$pnumber', '$dob', '$gender', '$address', '$country', '$city', '$region', '$postalCode', '$imagePath')";
 
                     if ($conn->query($sql) === TRUE) {
                         echo "Data inserted successfully.";

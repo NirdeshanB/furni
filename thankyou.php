@@ -1,3 +1,8 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -166,7 +171,7 @@
                         <p class="mb-2 text-center text-lg-start">
                             Copyright &copy;
                             <script>
-                            document.write(new Date().getFullYear());
+                                document.write(new Date().getFullYear());
                             </script>
                             . All Rights Reserved. &mdash; Designed with love by
                             <a href="https://untree.co">Untree.co</a> Distributed By
@@ -193,3 +198,62 @@
 </body>
 
 </html>
+
+<?php
+require 'config.php';
+
+// Ensure the session is started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check required session variables
+if (!isset($_SESSION['username'], $_SESSION['paymentMethod'], $_SESSION['cartItems'])) {
+    die("Required session data is missing.");
+}
+
+// Extract session data
+$username = $_SESSION['username'];
+$paymentmethod = $_SESSION['paymentMethod'];
+$cartItems = $_SESSION['cartItems'];
+$fullname = $_SESSION['fullname']; // Assuming userInfo contains 'fullname'
+
+// Loop through cart items to insert orders
+foreach ($cartItems as $item) {
+    $productcode = $item['product_code'];
+    $productname = $item['product_name'];
+    $productprice = $item['product_price'];
+
+    $sql = "INSERT INTO orders (product_code, product_name, product_price, full_name, username, payment_method) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        error_log("Prepare failed: " . $conn->error);
+        continue;
+    }
+
+    $stmt->bind_param("ssssss", $productcode, $productname, $productprice, $fullname, $username, $paymentmethod);
+
+    if (!$stmt->execute()) {
+        error_log("Insert failed: " . $stmt->error);
+    }
+
+    $stmt->close();
+}
+
+// Clear the cart for the user
+$sql = "DELETE FROM cart WHERE Username = ?";
+$stmt = $conn->prepare($sql);
+
+if ($stmt) {
+    $stmt->bind_param("s", $username);
+    if (!$stmt->execute()) {
+        error_log("Cart deletion failed: " . $stmt->error);
+    }
+    $stmt->close();
+} else {
+    error_log("Cart deletion prepare failed: " . $conn->error);
+}
+
+echo "Order placed successfully and cart cleared.";
+?>

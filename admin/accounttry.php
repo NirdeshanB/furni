@@ -65,6 +65,9 @@ require 'config.php'; // Include your database connection
                 }
             }
             ?>
+            <?php
+            print_r($selectedUserData);
+            ?>
             <div id="userInfo" class="row tm-content-row"
                 style="display: <?= isset($selectedUserData) ? 'block' : 'none' ?>;">
                 <div class="tm-block-col tm-col-avatar">

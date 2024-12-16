@@ -158,9 +158,8 @@ if (isset($_POST['submit'])) {
                     // Path to store in the database (you can store either relative or absolute path)
 
                     // Save data to database
-                    $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Hash password
                     $sql = "INSERT INTO admin (Full_name, Username, Phone_number, email, Password, Profile_picture) VALUES 
-                        ('$fullname', '$username', '$pnumber', '$email', '$hashedPassword', '$targetFile')";
+                        ('$fullname', '$username', '$pnumber', '$email', '$password', '$targetFile')";
 
                     if ($conn->query($sql) === TRUE) {
                         echo '<script>alert("Data inserted successfully.");</script>';

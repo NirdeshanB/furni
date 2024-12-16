@@ -1,4 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+echo '<pre>';
+print_r($_SESSION);
+echo '</pre>';
 $curl = curl_init();
 curl_setopt_array($curl, array(
     CURLOPT_URL => 'https://a.khalti.com/api/v2/epayment/initiate/',
@@ -9,39 +16,27 @@ curl_setopt_array($curl, array(
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
     CURLOPT_CUSTOMREQUEST => 'POST',
-    CURLOPT_POSTFIELDS => '{
-    "return_url": "http://example.com/",
-    "website_url": "https://example.com/",
-    "amount": "1000",
-    "purchase_order_id": "Order01",
-        "purchase_order_name": "test",
-
-    "customer_info": {
-        "name": "Test Bahadur",
-        "email": "test@khalti.com",
-        "phone": "9800000001"
-    }
-    }
-
-    ',
+    CURLOPT_POSTFIELDS => json_encode(array(
+        "return_url" => "http://localhost/project/furni-1.0.0/thank_you.php",
+        "website_url" => "http://localhost/project/furni-1.0.0/checkout.php",
+        "amount" => $total * 100,
+        "product_name" => "product_name",
+    )),
     CURLOPT_HTTPHEADER => array(
-        'Authorization: key live_secret_key_68791341fdd94846a146f0457ff7b455',
+        'Authorization: Key live_secret_key_68791341fdd94846a146f0457ff7b455',
         'Content-Type: application/json',
     ),
 ));
 
 $response = curl_exec($curl);
-
 curl_close($curl);
-echo $response;
 
-$response = curl_exec($curl);
+$responseData = json_decode($response, true);
 
-$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-if ($http_code != 200) {
-    echo "HTTP Response Code: " . $http_code;
+if (isset($responseData['payment_url'])) {
+    header('Location: ' . $responseData['payment_url']);
+    exit();
+} else {
+    $error = "Error: Unable to initiate payment.";
+    echo $error;
 }
-
-curl_close($curl);
-
-echo $response;

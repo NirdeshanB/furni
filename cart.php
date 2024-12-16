@@ -50,6 +50,7 @@ while ($row = $result->fetch_assoc()) {
     $cartItems[] = [
         'id' => $row['id'],
         'product_name' => $row['product_name'],
+        'product_code' => $row['product_code'],
         'product_price' => $row['product_price'],
         'quantity' => $row['quantity'],
         'product_image' => $row['product_image'],
