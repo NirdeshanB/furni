@@ -167,13 +167,14 @@ a.more {
   max-width: 780px;
   left: -20px;
 }
-@media (min-width: 768px) {
+@media (max-width: 768px) {
   .hero .hero-img-wrap img {
     right: 0px;
     left: -100px;
+    max-width: 300px;
   }
 }
-@media (min-width: 992px) {
+@media (max-width: 992px) {
   .hero .hero-img-wrap img {
     left: 0px;
     top: -140px;
@@ -181,7 +182,7 @@ a.more {
     right: -50px;
   }
 }
-@media (min-width: 1200px) {
+@media (max-width: 1200px) {
   .hero .hero-img-wrap img {
     left: 0px;
     top: -140px;

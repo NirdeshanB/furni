@@ -30,7 +30,9 @@ $totalAmount = 0;
 foreach ($cart_items as $item) {
     $totalAmount += $item['total'];
 }
+
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -203,12 +205,12 @@ foreach ($cart_items as $item) {
                                             <label class="form-check-label" for="inlineRadio2"><img
                                                     src="images/stripe.png" /></label>
                                         </div>
-                                        <!-- <div class="form-check form-check-inline">
+                                        <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio4" value="khalti">
                                             <label class="form-check-label" for="inlineRadio4"><img
                                                     src="images/khalti.png" /></label>
-                                        </div> -->
+                                        </div>
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="radio" name="paymentMethods"
                                                 id="inlineRadio3" value="cash">
@@ -265,9 +267,9 @@ foreach ($cart_items as $item) {
                     case "cash":
                         window.location.href = "thankyou.php";
                         break;
-                    // case "khalti":
-                    //     window.location.href = "khalti.php";
-                    //     break;
+                    case "khalti":
+
+                        break;
                     default:
                         alert("Please select a payment method.");
                 }

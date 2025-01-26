@@ -2,10 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+$total = $_SESSION['grandTotal'];
+// echo 'total:' . $total;
 
-echo '<pre>';
-print_r($_SESSION);
-echo '</pre>';
+// echo '<pre>';
+// print_r($_SESSION);
+// echo '</pre>';
 $curl = curl_init();
 curl_setopt_array($curl, array(
     CURLOPT_URL => 'https://a.khalti.com/api/v2/epayment/initiate/',
@@ -18,9 +20,9 @@ curl_setopt_array($curl, array(
     CURLOPT_CUSTOMREQUEST => 'POST',
     CURLOPT_POSTFIELDS => json_encode(array(
         "return_url" => "http://localhost/project/furni-1.0.0/thank_you.php",
-        "website_url" => "http://localhost/project/furni-1.0.0/checkout.php",
+        "website_url" => "http://localhost/project/furni-1.0.0/",
         "amount" => $total * 100,
-        "product_name" => "product_name",
+
     )),
     CURLOPT_HTTPHEADER => array(
         'Authorization: Key live_secret_key_68791341fdd94846a146f0457ff7b455',

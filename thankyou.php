@@ -57,7 +57,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         </svg>
                     </span>
                     <h2 class="display-3 text-black">Thank you!</h2>
-                    <p class="lead mb-5">You order was successfuly completed.</p>
+                    <p class="lead mb-5">You order was successfuly completed (Please note that this is a test website, and no actual products or services will be delivered.).</p>
                     <p>
                         <a href="shop.php" class="btn btn-sm btn-outline-black">Back to shop</a>
                     </p>
@@ -206,15 +206,18 @@ require 'config.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+echo print_r($_SESSION) . '<br>';
 
 // Check required session variables
-if (!isset($_SESSION['username'], $_SESSION['paymentMethod'], $_SESSION['cartItems'])) {
+if (!isset($_SESSION['username'], $_SESSION['cartItems'])) {
     die("Required session data is missing.");
 }
 
+
+
 // Extract session data
 $username = $_SESSION['username'];
-$paymentmethod = $_SESSION['paymentMethod'];
+$paymentmethod = 0;
 $cartItems = $_SESSION['cartItems'];
 $fullname = $_SESSION['fullname']; // Assuming userInfo contains 'fullname'
 

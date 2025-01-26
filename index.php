@@ -38,7 +38,7 @@
                             home. Explore our latest collections and find the perfect pieces to suit your taste.
                         </p>
                         <p>
-                            <a href="shop.html" class="btn btn-secondary me-2">Shop Now</a><a href="blog.html"
+                            <a href="shop.php" class="btn btn-secondary me-2">Shop Now</a><a href="blog.html"
                                 class="btn btn-white-outline">Explore</a>
                         </p>
                     </div>

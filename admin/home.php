@@ -1,3 +1,14 @@
+<?php
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+if (!isset($_SESSION['username'])) {
+    header('Location: index.php');
+    exit(); // Stop further script execution
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -29,12 +40,12 @@
             <div class="row">
                 <div class="col">
                     <?php if (isset($_SESSION['username'])) { ?>
-                    <?php foreach ($_SESSION['adminInfo'] as $info): ?>
-                    <p class="text-white mt-5 mb-5">Welcome back, <b><?php echo $info['fullname'] ?>.</b></p>
-                    </b></p>
-                    <?php endforeach; ?>
+                        <?php foreach ($_SESSION['adminInfo'] as $info): ?>
+                            <p class="text-white mt-5 mb-5">Welcome back, <b><?php echo $info['fullname'] ?>.</b></p>
+                            </b></p>
+                        <?php endforeach; ?>
                     <?php } else { ?>
-                    <p class="text-white mt-5 mb-5">Welcome back, <b>Admin.</b></p>
+                        <p class="text-white mt-5 mb-5">Welcome back, <b>Admin.</b></p>
                     <?php } ?>
                 </div>
             </div>
@@ -324,29 +335,29 @@
     <!-- https://getbootstrap.com/ -->
     <script src="js/tooplate-scripts.js"></script>
     <script>
-    Chart.defaults.global.defaultFontColor = 'white';
-    let ctxLine,
-        ctxBar,
-        ctxPie,
-        optionsLine,
-        optionsBar,
-        optionsPie,
-        configLine,
-        configBar,
-        configPie,
-        lineChart;
-    barChart, pieChart;
-    // DOM is ready
-    $(function() {
-        drawLineChart(); // Line Chart
-        drawBarChart(); // Bar Chart
-        drawPieChart(); // Pie Chart
+        Chart.defaults.global.defaultFontColor = 'white';
+        let ctxLine,
+            ctxBar,
+            ctxPie,
+            optionsLine,
+            optionsBar,
+            optionsPie,
+            configLine,
+            configBar,
+            configPie,
+            lineChart;
+        barChart, pieChart;
+        // DOM is ready
+        $(function () {
+            drawLineChart(); // Line Chart
+            drawBarChart(); // Bar Chart
+            drawPieChart(); // Pie Chart
 
-        $(window).resize(function() {
-            updateLineChart();
-            updateBarChart();
-        });
-    })
+            $(window).resize(function () {
+                updateLineChart();
+                updateBarChart();
+            });
+        })
     </script>
 </body>
 

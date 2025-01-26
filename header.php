@@ -86,9 +86,6 @@ require 'config.php'; // Include your database connection
                             </ul>
                         <?php } ?>
                     </li>
-
-
-
                 </ul>
 
             </div>

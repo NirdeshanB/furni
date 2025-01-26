@@ -100,7 +100,7 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
-        </script>
+    </script>
 
 </body>
 
@@ -133,64 +133,64 @@ if (isset($_POST['submit'])) {
         empty($pnumber) || empty($dob) || empty($gender) || empty($address) || empty($country) ||
         empty($city) || empty($region) || empty($postalCode) || empty($profilePicture)
     ) {
-        echo "Please fill in all required fields.";
+        echo '<script>alert("Please fill in all required fields.");</script>';
     } elseif ($password !== $cpassword) {
-        echo "Passwords do not match.";
+        echo '<script>alert("Passwords do not match.");</script>';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo '<script>alert("Invalid email format.");</script>';
+    } elseif (!preg_match('/^[a-zA-Z0-9]{5,20}$/', $username)) {
+        echo '<script>alert("Username must be 5-20 characters long and contain only letters and numbers.");</script>';
+    } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/', $password)) {
+        echo '<script>alert("Password must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one number, and one special character.");</script>';
     } else {
-        // Validate email format (add more validation if needed)
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo "Invalid email format.";
+        // Handle profile picture upload
+        $targetDir = addslashes("furni-1.0.0\\Users\\"); // Update this path if needed
+        $imageFileType = strtolower(pathinfo($profilePicture, PATHINFO_EXTENSION));
+        $newFileName = $username . "." . $imageFileType; // Rename file to username.extension
+        $targetFile = $targetDir . $newFileName;
+        $uploadOk = 1;
+
+        // Check file size
+        if ($_FILES["profile_picture"]["size"] > 500000) { // 500 KB
+            echo "Sorry, your file is too large.";
+            $uploadOk = 0;
+        }
+
+        // Allow certain file formats
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
+            echo "Sorry, only JPG, PNG & JPEG files are allowed.";
+            $uploadOk = 0;
+        }
+
+        // Check if file already exists
+        if (file_exists($targetFile)) {
+            // If a file already exists with this username, delete it
+            unlink($targetFile);
+        }
+
+        // Check if $uploadOk is set to 0 by errors
+        if ($uploadOk == 0) {
+            echo "Sorry, your file was not uploaded.";
         } else {
-            // Handle profile picture upload
-            $targetDir = addslashes("furni-1.0.0\\Users\\"); // Update this path if needed
-            $imageFileType = strtolower(pathinfo($profilePicture, PATHINFO_EXTENSION));
-            $newFileName = $username . "." . $imageFileType; // Rename file to username.extension
-            $targetFile = $targetDir . $newFileName;
-            $uploadOk = 1;
+            // Move the uploaded file
+            if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
+                // Path to store in the database (you can store either relative or absolute path)
+                $imagePath = $targetDir . $newFileName;
 
-            // Check file size
-            if ($_FILES["profile_picture"]["size"] > 500000) { // 500 KB
-                echo "Sorry, your file is too large.";
-                $uploadOk = 0;
-            }
-
-            // Allow certain file formats
-            if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg") {
-                echo "Sorry, only JPG, PNG & JPEG files are allowed.";
-                $uploadOk = 0;
-            }
-
-            // Check if file already exists
-            if (file_exists($targetFile)) {
-                // If a file already exists with this username, delete it
-                unlink($targetFile);
-            }
-
-            // Check if $uploadOk is set to 0 by errors
-            if ($uploadOk == 0) {
-                echo "Sorry, your file was not uploaded.";
-            } else {
-                // Move the uploaded file
-                if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
-                    // Path to store in the database (you can store either relative or absolute path)
-                    $imagePath = $targetDir . $newFileName;
-
-                    // Save data to database
-                    $sql = "INSERT INTO user (Full_name, Email, Username, Password, Phone_number, Date_of_birth, Gender, Address, Country, City, Region, Postal_code, Profile_picture) VALUES 
+                // Save data to database
+                $sql = "INSERT INTO user (Full_name, Email, Username, Password, Phone_number, Date_of_birth, Gender, Address, Country, City, Region, Postal_code, Profile_picture) VALUES 
                         ('$fullname', '$email', '$username', '$password', '$pnumber', '$dob', '$gender', '$address', '$country', '$city', '$region', '$postalCode', '$imagePath')";
 
-                    if ($conn->query($sql) === TRUE) {
-                        echo "Data inserted successfully.";
-                    } else {
-                        echo "Error: " . $sql . "<br>" . $conn->error;
-                    }
+                if ($conn->query($sql) === TRUE) {
+                    echo '<script>alert("Data inserted successfully.");</script>';
                 } else {
-                    echo "Sorry, there was an error uploading your file.";
+                    echo '<script>alert("Error: " . $sql . "<br>" . $conn->error");</script>';
                 }
+            } else {
+                echo '<script>alert("Sorry, there was an error uploading your file.");</script>';
             }
         }
     }
 }
-
 $conn->close();
 ?> -->

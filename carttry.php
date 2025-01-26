@@ -19,7 +19,8 @@ $grandTotal = 0; // Initialize
 $coupon_discount = 0; // Initialize
 
 // Calculate grand total from the database
-$stmt = $conn->prepare("SELECT SUM(product_price * quantity) AS grand_total FROM cart");
+$stmt = $conn->prepare("SELECT SUM(product_price * quantity) AS grand_total FROM cart where username=?");
+$stmt->bind_param("s", $_SESSION['username']);
 $stmt->execute();
 $result = $stmt->get_result();
 $row = $result->fetch_assoc();
@@ -39,9 +40,9 @@ if (isset($_POST["submit"])) {
     }
 }
 
-// Fetch products from the cart
 $cartItems = [];
-$stmt = $conn->prepare("SELECT * FROM cart");
+$stmt = $conn->prepare("SELECT * FROM cart where username=?");
+$stmt->bind_param("s", $_SESSION['username']);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -49,6 +50,7 @@ while ($row = $result->fetch_assoc()) {
     $cartItems[] = [
         'id' => $row['id'],
         'product_name' => $row['product_name'],
+        'product_code' => $row['product_code'],
         'product_price' => $row['product_price'],
         'quantity' => $row['quantity'],
         'product_image' => $row['product_image'],
@@ -56,16 +58,13 @@ while ($row = $result->fetch_assoc()) {
     ];
 }
 
-$_SESSION['cartItems'] = $cartItems; // Store cart items in session
-$_SESSION['coupon_discount'] = $coupon_discount; // Store coupon discount
-$_SESSION['grandTotal'] = $grandTotal - $coupon_discount; // Store grand total
+$_SESSION['cartItems'] = $cartItems;
+$_SESSION['coupon_discount'] = $coupon_discount;
+$_SESSION['grandTotal'] = $grandTotal - $coupon_discount;
 
 
-// Initialize a variable to check if the cart is empty
 $isCartEmpty = ($result->num_rows === 0);
 
-
-// Check if the required data is sent via POST (for updating quantity)
 if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
     $productId = $_POST['product_id'];
     $newQuantity = (int) $_POST['quantity'];
@@ -76,7 +75,8 @@ if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
     $stmt->execute();
 
     // Recalculate grand total from the database
-    $stmt = $conn->prepare("SELECT SUM(product_price * quantity) AS grand_total FROM cart");
+    $stmt = $conn->prepare("SELECT SUM(product_price * quantity) AS grand_total FROM cart where username=?");
+    $stmt->bind_param("s", $_SESSION['username']);
     $stmt->execute();
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
@@ -89,11 +89,30 @@ if (isset($_POST['product_id']) && isset($_POST['quantity'])) {
     ]);
 }
 
-if (isset($_POST['checkout-button'])){
-    $quantity=$_POST['newquantity'];
+if (isset($_POST['action']) && $_POST['action'] === 'update_quantity') {
+    if (!isset($_SESSION['cartItems'])) {
+        $_SESSION['cartItems'] = [];
+    }
 
-    $_SESSION['quantity']=$quantity;
+    $productId = $_POST['product_id'];
+    $newQuantity = (int) $_POST['quantity'];
+
+    // Update the session
+    foreach ($_SESSION['cartItems'] as &$item) {
+        if ($item['id'] == $productId) {
+            $item['quantity'] = $newQuantity;
+            break;
+        }
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Quantity updated in session',
+        'cartItems' => $_SESSION['cartItems']
+    ]);
+    exit;
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -154,47 +173,48 @@ if (isset($_POST['checkout-button'])){
                             </thead>
                             <tbody>
                                 <?php
-                                $stmt = $conn->prepare("SELECT * FROM cart");
+                                $stmt = $conn->prepare("SELECT * FROM cart where username=?");
+                                $stmt->bind_param("s", $_SESSION['username']);
                                 $stmt->execute();
                                 $result = $stmt->get_result();
                                 $grandTotal = 0; // Initialize grand total
                                 
                                 while ($row = $result->fetch_assoc()) {
-                                    $itemTotal = $row['product_price'] * $row['quantity']; // Calculate item total
-                                    $grandTotal += $itemTotal; // Add to grand total
+                                    $itemTotal = $row['product_price'] * $row['quantity'];
+                                    $grandTotal += $itemTotal;
                                     ?>
-                                <tr>
-                                    <td class="product-thumbnail">
-                                        <img src="<?= $row['product_image'] ?>" alt="Image" class="img-fluid" />
-                                    </td>
-                                    <td class="product-name">
-                                        <h2 class="h5 text-black"><?= $row['product_name'] ?></h2>
-                                    </td>
-                                    <td class="product-price" data-id="<?= $row['id'] ?>"
-                                        data-price="<?= $row['product_price'] ?>">
-                                        Rs. <?= number_format($row['product_price'], 2) ?>/-
-                                    </td>
-                                    <td>
-                                        <div class="input-group mb-3 d-flex align-items-center quantity-container"
-                                            style="max-width: 120px">
-                                            <div class="input-group-prepend">
-                                                <button class="btn btn-outline-black decrease" type="button">−</button>
+                                    <tr>
+                                        <td class="product-thumbnail">
+                                            <img src="<?= $row['product_image'] ?>" alt="Image" class="img-fluid" />
+                                        </td>
+                                        <td class="product-name">
+                                            <h2 class="h5 text-black"><?= $row['product_name'] ?></h2>
+                                        </td>
+                                        <td class="product-price" data-id="<?= $row['id'] ?>"
+                                            data-price="<?= $row['product_price'] ?>">
+                                            Rs. <?= number_format($row['product_price'], 2) ?>/-
+                                        </td>
+                                        <td>
+                                            <div class="input-group mb-3 d-flex align-items-center quantity-container"
+                                                style="max-width: 120px">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn btn-outline-black decrease" type="button">−</button>
+                                                </div>
+                                                <input class="form-control text-center quantity-amount"
+                                                    value="<?= $row['quantity'] ?>" name="quantity" min="1"
+                                                    data-id="<?= $row['id'] ?>" />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-black increase" type="button">+</button>
+                                                </div>
                                             </div>
-                                            <input class="form-control text-center quantity-amount"
-                                                value="<?= $row['quantity'] ?>" name="quantity" min="1"
-                                                data-id="<?= $row['id'] ?>" />
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-black increase" type="button">+</button>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="item-total" id="total_<?= $row['id'] ?>">
-                                        Rs. <?= number_format($itemTotal, 2) ?>/-
-                                    </td>
-                                    <td>
-                                        <a href="cart.php?remove=<?= $row['id'] ?>" class="btn btn-black btn-sm">X</a>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="item-total" id="total_<?= $row['id'] ?>">
+                                            Rs. <?= number_format($itemTotal, 2) ?>/-
+                                        </td>
+                                        <td>
+                                            <a href="cart.php?remove=<?= $row['id'] ?>" class="btn btn-black btn-sm">X</a>
+                                        </td>
+                                    </tr>
                                 <?php } ?>
                             </tbody>
                         </table>
@@ -211,6 +231,13 @@ if (isset($_POST['checkout-button'])){
                                 <button class="btn btn-outline-black btn-sm btn-block">
                                     Continue Shopping
                                 </button></a>
+                        </div>
+                        <div class="col-md-6">
+                            <form action="savecart.php" method="post">
+                                <button type="submit" name="savecart" class="btn btn-outline-black btn-sm btn-block">
+                                    Save
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <div class="row">
@@ -267,9 +294,8 @@ if (isset($_POST['checkout-button'])){
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="btn">
-                                        <a href="checkout.php">
+                                        <a href="checkouttry.php">
                                             <button class="btn btn-black btn-lg py-3 btn-block" id="checkout-button"
-                                                name="checkout-button"
                                                 <?php echo $isCartEmpty ? 'disabled' : 'enabled'; ?>>
                                                 Proceed To Checkout
                                             </button></a>
@@ -292,133 +318,141 @@ if (isset($_POST['checkout-button'])){
     <script src="js/tiny-slider.js"></script>
     <script src="js/aos.js"></script>
     <script>
-    document.querySelectorAll('.increase').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.closest('.quantity-container').querySelector('.quantity-amount');
-            let quantity = parseInt(input.value);
-            quantity++;
-            input.value = quantity;
-
-            const productId = input.getAttribute('data-id');
-            updateTotals(productId, quantity);
-        });
-    });
-
-    document.querySelectorAll('.decrease').forEach(button => {
-        button.addEventListener('click', function() {
-            const input = this.closest('.quantity-container').querySelector('.quantity-amount');
-            let quantity = parseInt(input.value);
-            if (quantity > 1) {
-                quantity--;
+        document.querySelectorAll('.increase').forEach(button => {
+            button.addEventListener('click', function () {
+                const input = this.closest('.quantity-container').querySelector('.quantity-amount');
+                let quantity = parseInt(input.value);
+                quantity++;
                 input.value = quantity;
 
                 const productId = input.getAttribute('data-id');
                 updateTotals(productId, quantity);
-            }
 
-        });
-    });
-
-    document.getElementById('checkout-button').addEventListener('click', function() {
-        const cartItems = [];
-
-        // Gather all cart items' data
-        document.querySelectorAll('.item-total').forEach(itemTotal => {
-            const productRow = itemTotal.closest('tr');
-            const productId = productRow.querySelector('.product-price').getAttribute('data-id');
-            const productName = productRow.querySelector('.product-name h2').innerText;
-            const productImage = productRow.querySelector('.product-thumbnail img').src;
-            const quantity = parseInt(productRow.querySelector('.quantity-amount').value);
-            const productcode = productRow.querySelector('.product-code').innerText;
-            const total = parseFloat(itemTotal.innerText.replace('Rs. ', '').replace('/-', '').replace(
-                /,/g, ''));
-
-            cartItems.push({
-                productId,
-                productName,
-                productImage,
-                quantity,
-                total
+                // Send updated quantity to the server
+                updateSessionQuantity(productId, quantity);
             });
         });
 
-        const couponDiscount = parseFloat(document.querySelector('.cart-discount').innerText.replace('Rs. ', '')
-            .replace('/-', '').replace(/,/g, '')) || 0;
+        document.querySelectorAll('.decrease').forEach(button => {
+            button.addEventListener('click', function () {
+                const input = this.closest('.quantity-container').querySelector('.quantity-amount');
+                let quantity = parseInt(input.value);
+                if (quantity > 1) {
+                    quantity--;
+                    input.value = quantity;
 
-        // Send the cart items and coupon discount to the server
-        $.ajax({
-            url: 'checkout_process.php',
-            method: 'POST',
-            data: {
-                cartItems: cartItems,
-                couponDiscount: couponDiscount
-            },
-            success: function(response) {
-                const data = JSON.parse(response);
-                if (data.status === 'success') {
-                    // Redirect to the success page or order confirmation
-                    window.location = 'order_confirmation.php'; // or whatever the next page is
-                } else {
-                    alert('Error during checkout: ' + data.message);
+                    const productId = input.getAttribute('data-id');
+                    updateTotals(productId, quantity);
+
+                    // Send updated quantity to the server
+                    updateSessionQuantity(productId, quantity);
                 }
-            }
-        });
-    });
-
-
-    function updateTotals(productId, quantity) {
-        const priceElement = document.querySelector(`.product-price[data-id='${productId}']`);
-        const price = parseFloat(priceElement.getAttribute('data-price'));
-        const itemTotal = price * quantity;
-
-        const totalElement = document.getElementById(`total_${productId}`);
-        totalElement.innerText = 'Rs. ' + itemTotal.toFixed(2) + '/-';
-
-        let grandTotal = 0;
-        document.querySelectorAll('.item-total').forEach(total => {
-            const totalValue = parseFloat(total.innerText.replace('Rs. ', '').replace('/-', '').replace(/,/g,
-                ''));
-            grandTotal += totalValue;
+            });
         });
 
-        const couponDiscount = parseFloat(document.querySelector('.cart-discount').innerText.replace('Rs. ', '')
-            .replace('/-', '').replace(/,/g, '')) || 0;
-
-        document.querySelector('.cart-total').innerText = 'Rs. ' + (grandTotal - couponDiscount).toFixed(2) + '/-';
-        document.querySelector('.cart-subtotal').innerText = 'Rs. ' + grandTotal.toFixed(2) + '/-';
-
-        // Check if there are any items in the cart
-        const cartItems = document.querySelectorAll('.item-total');
-        const isCartEmpty = cartItems.length === 0;
-
-        // Enable or disable the checkout button
-        const checkoutButton = document.getElementById('checkout-button');
-        checkoutButton.disabled = isCartEmpty;
-
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const cartItems = document.querySelectorAll('.item-total');
-            const checkoutButton = document.getElementById('checkout-button');
-            checkoutButton.disabled = cartItems.length === 0;
-        });
-        // Send the updated data to the server via AJAX
-        $.ajax({
-            url: 'cart.php',
-            method: 'POST',
-            data: {
-                product_id: productId,
-                quantity: quantity
-            },
-            success: function(response) {
-                const data = JSON.parse(response);
-                if (data.status === 'success') {
-                    console.log('Cart updated successfully:', data);
-                } else {
-                    console.log('Error updating cart:', data.message);
+        function updateSessionQuantity(productId, quantity) {
+            $.ajax({
+                url: 'updatesession.php',
+                method: 'POST',
+                data: {
+                    productId: productId,
+                    quantity: quantity
+                },
+                success: function (response) {
+                    console.log('Session updated:', response);
+                },
+                error: function (error) {
+                    console.error('Error updating session:', error);
                 }
-            }
+            });
+        }
+
+
+        document.getElementById('checkout-button').addEventListener('click', function () {
+            const cartItems = [];
+
+            // Gather all cart items' data
+            document.querySelectorAll('.item-total').forEach(itemTotal => {
+                const productRow = itemTotal.closest('tr');
+                const productId = productRow.querySelector('.product-price').getAttribute('data-id');
+                const productName = productRow.querySelector('.product-name h2').innerText;
+                const productImage = productRow.querySelector('.product-thumbnail img').src;
+                const quantity = parseInt(productRow.querySelector('.quantity-amount').value);
+                const productcode = productRow.querySelector('.product-code').innerText;
+                const total = parseFloat(itemTotal.innerText.replace('Rs. ', '').replace('/-', '').replace(
+                    /,/g, ''));
+
+                cartItems.push({
+                    productId,
+                    productName,
+                    productImage,
+                    quantity,
+                    total
+                });
+            });
+
+            const couponDiscount = parseFloat(document.querySelector('.cart-discount').innerText.replace('Rs. ', '')
+                .replace('/-', '').replace(/,/g, '')) || 0;
+
+            // Send the cart items and coupon discount to the server
+            $.ajax({
+                url: 'checkout_process.php',
+                method: 'POST',
+                data: {
+                    cartItems: cartItems,
+                    couponDiscount: couponDiscount
+                },
+                success: function (response) {
+                    const data = JSON.parse(response);
+                    if (data.status === 'success') {
+                        // Redirect to the success page or order confirmation
+                        window.location = 'order_confirmation.php'; // or whatever the next page is
+                    } else {
+                        alert('Error during checkout: ' + data.message);
+                    }
+                }
+            });
         });
-    }
+
+
+        function updateTotals(productId, quantity) {
+            const priceElement = document.querySelector(`.product-price[data-id='${productId}']`);
+            const price = parseFloat(priceElement.getAttribute('data-price'));
+            const itemTotal = price * quantity;
+
+            const totalElement = document.getElementById(`total_${productId}`);
+            totalElement.innerText = 'Rs. ' + itemTotal.toFixed(2) + '/-';
+
+            let grandTotal = 0;
+            document.querySelectorAll('.item-total').forEach(total => {
+                const totalValue = parseFloat(total.innerText.replace('Rs. ', '').replace('/-', '').replace(/,/g,
+                    ''));
+                grandTotal += totalValue;
+            });
+
+            const couponDiscount = parseFloat(document.querySelector('.cart-discount').innerText.replace('Rs. ', '')
+                .replace('/-', '').replace(/,/g, '')) || 0;
+
+            document.querySelector('.cart-total').innerText = 'Rs. ' + (grandTotal - couponDiscount).toFixed(2) + '/-';
+            document.querySelector('.cart-subtotal').innerText = 'Rs. ' + grandTotal.toFixed(2) + '/-';
+
+            // Send the updated data to the server via AJAX
+            $.ajax({
+                url: 'cart.php',
+                method: 'POST',
+                data: {
+                    action: 'update_quantity',
+                    product_id: productId,
+                    quantity: quantity
+                },
+                success: function (response) {
+                    console.log('Session updated successfully:', response);
+                },
+                error: function (error) {
+                    console.error('Error updating session:', error);
+                }
+            });
+        }
     </script>
 
 
